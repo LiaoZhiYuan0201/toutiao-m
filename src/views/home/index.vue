@@ -1,6 +1,6 @@
 <template>
-    <div>
-        主页面视图
+    <div class="home-container">
+        首页
     </div>
 </template>
 
