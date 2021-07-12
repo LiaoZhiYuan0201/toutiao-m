@@ -15,6 +15,8 @@ import './styles/index.less'
 //自动设置REM基准值 
 import 'amfe-flexible'
 
+import './utils/dayjs.js'
+
 
 Vue.use(Vant);
 
