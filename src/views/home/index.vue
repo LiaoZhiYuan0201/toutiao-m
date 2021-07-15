@@ -8,6 +8,7 @@
         round
         size="small"
         class="search-btn"
+        to="/search"
       >
         搜索
       </van-button>

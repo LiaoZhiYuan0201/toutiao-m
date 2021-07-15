@@ -35,6 +35,18 @@ const routes = [{
 
 
     ]
+  },
+  {
+    path: '/search',
+    name: 'search',
+    component: () => import('../views/search/index.vue')
+  },
+  {
+    path: '/article/:articleId',
+    name: 'article',
+    component: () => import('../views/article/index.vue'),
+    //路由动态参数映射到组件props中
+    props: true
   }
 ]
 
