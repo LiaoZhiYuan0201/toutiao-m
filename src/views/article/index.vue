@@ -6,42 +6,60 @@
       left-arrow
       @click-left="$router.back()"
     />
-    <h1 class="title">{{ article.title }}</h1>
-    <van-cell center class="user-info">
-      <div slot="title" class="name">{{ article.aut_name }}</div>
+    <div class="article-warp">
+      <h1 class="title">{{ article.title }}</h1>
+      <van-cell center class="user-info">
+        <div slot="title" class="name">{{ article.aut_name }}</div>
 
-      <van-image
-        class="avatar"
-        slot="icon"
-        round
-        fit="cover"
-        :src="article.aut_photo"
-      />
-      <div slot="label" class="pubdate">
-        {{ article.pubdate | relativeTime }}
-      </div>
-      <van-button
-        round
-        size="small"
-        :type="article.is_followed ? 'default' : 'danger'"
-        class="follow-btn"
-        :icon="article.is_followed ? '' : 'plus'"
-        @click="onFollow"
-        :loading="isFollowLoading"
-        >{{ article.is_followed ? "已关注" : "关注" }}</van-button
-      >
-    </van-cell>
-    <div
-      class="markdown-body"
-      v-html="article.content"
-      ref="article-content"
-    ></div>
+        <van-image
+          class="avatar"
+          slot="icon"
+          round
+          fit="cover"
+          :src="article.aut_photo"
+        />
+        <div slot="label" class="pubdate">
+          {{ article.pubdate | relativeTime }}
+        </div>
+        <van-button
+          round
+          size="small"
+          :type="article.is_followed ? 'default' : 'danger'"
+          class="follow-btn"
+          :icon="article.is_followed ? '' : 'plus'"
+          @click="onFollow"
+          :loading="isFollowLoading"
+          >{{ article.is_followed ? "已关注" : "关注" }}</van-button
+        >
+      </van-cell>
+      <div
+        class="markdown-body"
+        v-html="article.content"
+        ref="article-content"
+      ></div>
+      <!-- 文章评论列表 -->
+      <comment-list
+        :source="articleId"
+        :list="commentList"
+        @update-total-count="totalCommentCount = $event"
+        @reply-click="onReplyClike"
+      ></comment-list>
+    </div>
     <!-- 底部区域 -->
     <div class="article-bottom">
-      <van-button class="comment-btn" type="default" round size="small"
+      <van-button
+        class="comment-btn"
+        type="default"
+        round
+        size="small"
+        @click="isPostShow = true"
         >写评论</van-button
       >
-      <van-icon name="comment-o" info="123" color="#777"></van-icon>
+      <van-icon
+        name="comment-o"
+        :badge="totalCommentCount"
+        color="#777"
+      ></van-icon>
       <van-icon
         :name="article.is_collected ? 'star' : 'star-o'"
         :color="article.is_collected ? 'orange' : '#777'"
@@ -54,6 +72,22 @@
       ></van-icon>
       <van-icon name="share" color="#777"></van-icon>
     </div>
+    <!-- 发布评论 -->
+    <van-popup v-model="isPostShow" position="bottom">
+      <post-comment
+        :target="articleId"
+        @post-success="onPostSucess"
+      ></post-comment>
+    </van-popup>
+    <!-- 评论回复 -->
+    <van-popup v-model="isReplyShow" position="bottom">
+      <comment-reply
+        v-if="isReplyShow"
+        :comment="replyComment"
+        :article-id="articleId"
+        @close="isReplyShow = false"
+      ></comment-reply>
+    </van-popup>
   </div>
 </template>
 
@@ -68,6 +102,9 @@ import {
 } from "@/api/article.js";
 import { ImagePreview } from "vant";
 import { addFollow, deleteFollow } from "@/api/user.js";
+import CommentList from "./components/comment-list.vue";
+import PostComment from "./components/post-comment.vue";
+import CommentReply from "./components/comment-reply.vue";
 
 export default {
   name: "ArticleIndex",
@@ -90,6 +127,19 @@ export default {
 
       //收藏
       isCollectLoading: false,
+
+      //控制发布评论的显示状态
+      isPostShow: false,
+
+      //文章评论列表
+      commentList: [],
+
+      totalCommentCount: 0, //评论总数量
+
+      //评论回复显示状态
+      isReplyShow: false,
+      //当前回复品论对象
+      replyComment: {},
     };
   },
   methods: {
@@ -153,15 +203,36 @@ export default {
         `${this.article.attitude === 1 ? "" : "取消"}点赞成功`
       );
     },
+    onPostSucess(comment) {
+      this.commentList.unshift(comment);
+      this.totalCommentCount++;
+      this.isPostShow = false;
+    },
+    onReplyClike(comment) {
+      this.replyComment = comment;
+      this.isReplyShow = true;
+    },
   },
 
-  components: {},
+  components: {
+    CommentList,
+    PostComment,
+    CommentReply,
+  },
   computed: {},
 };
 </script>
 
 <style scoped lang="less">
 .article-container {
+  .article-warp {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 46px;
+    bottom: 45px;
+    overflow-y: auto;
+  }
   .avatar {
     width: 35px;
     height: 35px;
