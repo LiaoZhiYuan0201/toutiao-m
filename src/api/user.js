@@ -58,3 +58,30 @@ export let deleteFollow = (userId) => {
         url: `/app/v1_0/user/followings/${userId}`,
     })
 }
+
+
+//获取用户资料
+export let getUserProfile = () => {
+    return request({
+        method: 'GET',
+        url: `/app/v1_0/user/profile`,
+    })
+}
+
+//修改用户资料
+export let updateUserProfile = (data) => {
+    return request({
+        method: 'PATCH',
+        url: `/app/v1_0/user/profile`,
+        data
+    })
+}
+
+//修改用户照片
+export let updateUserPhoto = (data) => {
+    return request({
+        method: 'PATCH',
+        url: `/app/v1_0/user/photo`,
+        data
+    })
+}

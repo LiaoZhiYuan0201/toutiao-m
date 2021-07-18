@@ -47,7 +47,14 @@ const routes = [{
     component: () => import('../views/article/index.vue'),
     //路由动态参数映射到组件props中
     props: true
-  }
+  },
+  {
+    path: '/user/profile',
+    name: 'user-profile',
+    component: () => import('../views/user-profile/index.vue'),
+    //路由动态参数映射到组件props中
+    props: true
+  },
 ]
 
 const router = new VueRouter({
