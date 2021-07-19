@@ -1,6 +1,8 @@
 <template>
   <div class="layout-container">
-    <router-view></router-view>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
     <!-- 底部导航栏 -->
     <van-tabbar v-model="active" route>
       <van-tabbar-item icon="home-o" to="/">首页</van-tabbar-item>
@@ -13,6 +15,7 @@
 
 <script>
 export default {
+  name: "LayoutIndex",
   created() {},
   props: {},
   data() {
@@ -23,6 +26,9 @@ export default {
   methods: {},
   components: {},
   computed: {},
+  mounted() {
+    this.$store.commit("addCachePage", "LayoutIndex");
+  },
 };
 </script>
 

@@ -69,8 +69,8 @@ export default {
   data() {
     return {
       user: {
-        mobile: "", //手机号
-        code: "", //验证码
+        mobile: "15211111111", //手机号
+        code: "246810", //验证码
       },
       formRules: {
         mobile: [
@@ -108,8 +108,11 @@ export default {
         this.$toast.success("登录成功");
         //将后端返回的token等数据 放在vuex中
         this.$store.commit("setUser", res.data);
-        this.$router.back()
 
+        //清除layout的缓存，让它重新渲染
+        this.$store.commit("removeCachePage", "LayoutIndex");
+
+        this.$router.push(this.$route.query.redirect || "/");
       } catch (err) {
         this.$toast.fail("登录失败,手机或验证码错误");
       }
